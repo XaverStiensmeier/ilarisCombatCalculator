@@ -1,1 +1,1 @@
-# ilarisFightCalculator
+# ilarisCombatCalculator
