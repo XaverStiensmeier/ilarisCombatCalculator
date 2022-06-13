@@ -13,7 +13,7 @@ def ilarisHitProb(at,vt):
     # 47.5-((y-41)*y)/8 is the added chance per bonus
     # (at>vt) is extra if at>vt because equal wins
     y = lambda y: 47.5-((y-41)*y)/8
-    return y(at-vt+(at>vt))/100 if at>=vt else 1-y(vt-at+(vt>at))/100
+    return min(max(0,y(at-vt+(at>vt))/100 if at>=vt else 1-y(vt-at+(vt>at))/100),1)
 
 def NdS_equal_k(k,n,s=6):
     """
@@ -37,29 +37,27 @@ def get_NdS_discrete_TP_distribution(n,s=6):
     """
     return [(k, NdS_equal_k(k,n,s)) for k in range(n,n*s+1)]
 
-def get_damage_output(discrete_TP_distribution, tp, ws, koloss=0, btp=0, hit_probability=1):
+def get_damage_output(discrete_TP_distribution, tp, wse, koloss=0, tpm=0, hit_probability=1):
     """
     discrete_TP_distribution: List of (k,p) tuples where k is a natural number and p the probability to get said k. Zero values are not listed.
     tp: weapon damage + extra damage by strength (KK)
     btp: bonus tp given by maneuvers
     """
-    return sum([(TP+tp+btp)*probability/(ws*2**koloss) for TP,probability in discrete_TP_distribution])
+    return sum([(TP+tp+tpm)*probability/(wse*2**koloss) for TP,probability in discrete_TP_distribution])
 
-def get_character_damage_output(from_character, to_character, btp=0):
+def get_being_damage_output(from_waffe, to_waffe, to_werte, from_atm=0, to_vtm=0, tpm=0):
     """
-    from_character: Character that is to be tested.
-    to_character: Character that is to be tested against.
-    return: Expected one-turn damage_output from from_character against to_character
+    from_being: Being that is to be tested.
+    to_being: Being that is to be tested against.
+    return: Expected one-turn damage_output from from_being against to_being
     """
     #print(from_character.name)
-    n,s,tp = from_character.tp
-    at = from_character.at
-    vt = to_character.vt
-    ws = to_character.wss
-    koloss = to_character.koloss
+    at,vt = from_waffe["AT"] + from_atm, to_waffe["VT"]+to_vtm
+    n,s,tp = from_waffe["TP"]["anzahl"], from_waffe["TP"]["W"], from_waffe["TP"]["plus"]+tpm
+    wse,koloss = to_werte.get("WSE") or to_werte["WS"], to_werte.get("koloss") or 0
     hit_probability = ilarisHitProb(at,vt)
     #print("hitpro", hit_probability)
     discrete_TP_distribution = get_NdS_discrete_TP_distribution(n,s)
     #print("discrete_tp_distribution")
     #print(discrete_TP_distribution)
-    return get_damage_output(discrete_TP_distribution, tp, ws, koloss, btp, hit_probability)
+    return get_damage_output(discrete_TP_distribution, tp, wse, koloss, tpm, hit_probability)
