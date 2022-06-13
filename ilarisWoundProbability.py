@@ -4,6 +4,11 @@ import numpy
 import math
 
 def ilarisHitProb(at,vt):
+    """
+    at: AT of attacking character
+    vt: VT of defending character
+    return: probability that attacking character will hit defending character
+    """
     # 47.5 is the chance without any bonus
     # 47.5-((y-41)*y)/8 is the added chance per bonus
     # (at>vt) is extra if at>vt because equal wins
@@ -41,6 +46,11 @@ def get_damage_output(discrete_TP_distribution, tp, ws, koloss=0, btp=0, hit_pro
     return sum([(TP+tp+btp)*probability/(ws*2**koloss) for TP,probability in discrete_TP_distribution])
 
 def get_character_damage_output(from_character, to_character, btp=0):
+    """
+    from_character: Character that is to be tested.
+    to_character: Character that is to be tested against.
+    return: Expected one-turn damage_output from from_character against to_character
+    """
     #print(from_character.name)
     n,s,tp = from_character.tp
     at = from_character.at
