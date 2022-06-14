@@ -18,6 +18,18 @@ alrik = {
  'name': 'Alrik',
  'talente': [{'name': 'Zähigkeit', 'wert': 24}]}
 
+
+zalrik = {
+ 'kampf': {
+  'waffen': [{'AT': 30,
+    'RW': 1,
+    'TP': {'W': 6, 'anzahl': 3, 'plus': 5},
+    'VT': 30,
+    'name': 'Angriff'}],
+  'werte': {'WSE': 6}},
+ 'name': 'Alrik',
+ 'talente': [{'name': 'Zähigkeit', 'wert': 24}]}
+
 def indict(thedict, thestring):
     """
     https://stackoverflow.com/questions/55173864/how-to-find-whether-a-string-either-a-key-or-a-value-in-a-dict-or-in-a-dict-of-d
@@ -80,7 +92,10 @@ def get_melee_prowess(from_being_dict, to_being_dict, maximum=True):
                 for from_ws in range(9):
                     from_waffe_damage, from_final_attack_counter = get_melee_expected_damage(from_doppelangriff, from_waffe, to_waffe, to_werte, from_atm-from_ws, from_attack_counter, tpm=from_ws)
                     to_waffe_damage, to_final_attack_counter = get_melee_expected_damage(to_doppelangriff, to_waffe, from_waffe, from_werte, to_atm, to_attack_counter)
-                    melee_prowess = from_waffe_damage/to_waffe_damage
+                    if to_waffe_damage == 0:
+                        melee_prowess = 420420420
+                    else:
+                        melee_prowess = from_waffe_damage/to_waffe_damage
                     if melee_prowess<0:
                         raise ValueError("Negative")
                     else:
@@ -110,7 +125,7 @@ def do_all(creature_dict, to_creature=alrik, maximum=True):
 
 def do_single(creature, to_creature=alrik, maximum=True):
     try:
-        return get_melee_prowess(creature_dict[creature], creature_dict[to_creature], maximum)
+        return get_melee_prowess(creature_dict[creature], to_creature, maximum)
     except (TypeError, KeyError, ValueError) as e:
         print(traceback.format_exc())
         return f"{creature}: {str(e)}"
@@ -121,5 +136,4 @@ with open("kreaturen.yml", "r") as stream:
     except yaml.YAMLError as exc:
         print(traceback.format_exc())
 
-pprint.pprint(do_all(creature_dict, creature_dict["soeldner"], maximum=False))
-#print(do_single("aaswolf"))
+pprint.pprint(do_all(creature_dict))

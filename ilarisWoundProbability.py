@@ -13,8 +13,13 @@ def ilarisHitProb(at,vt):
     # 47.5 is the chance without any bonus
     # 47.5-((y-41)*y)/8 is the added chance per bonus
     # (at>vt) is extra if at>vt because equal wins
-    y = lambda y: 47.5-((y-41)*y)/8
-    return min(max(0,y(at-vt+(at>vt))/100 if at>=vt else 1-y(vt-at+(vt>at))/100),1)
+    if at-vt>20:
+        return 1
+    elif vt-at>20:
+        return 0
+    else:
+        y = lambda y: 47.5-((y-41)*y)/8
+        return y(at-vt+(at>vt))/100 if at>=vt else 1-y(vt-at+(vt>at))/100
 
 def NdS_equal_k(k,n,s=6):
     """
@@ -44,7 +49,7 @@ def get_damage_output(discrete_TP_distribution, tp, wse, koloss=0, tpm=0, hit_pr
     tp: weapon damage + extra damage by strength (KK)
     btp: bonus tp given by maneuvers
     """
-    return sum([(TP+tp+tpm)*probability/(wse*2**koloss) for TP,probability in discrete_TP_distribution])
+    return hit_probability*sum([(TP+tp+tpm)*probability/(wse*2**koloss) for TP,probability in discrete_TP_distribution])
 
 def get_being_damage_output(from_waffe, to_waffe, to_werte, from_atm=0, to_vtm=0, tpm=0):
     """
