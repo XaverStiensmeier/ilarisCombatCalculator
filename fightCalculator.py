@@ -136,4 +136,5 @@ with open("kreaturen.yml", "r") as stream:
     except yaml.YAMLError as exc:
         print(traceback.format_exc())
 
-pprint.pprint(do_all(creature_dict))
+#pprint.pprint(do_all(creature_dict))
+pprint.pprint(do_single("oger", maximum=False))

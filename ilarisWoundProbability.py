@@ -49,7 +49,7 @@ def get_damage_output(discrete_TP_distribution, tp, wse, koloss=0, tpm=0, hit_pr
     tp: weapon damage + extra damage by strength (KK)
     btp: bonus tp given by maneuvers
     """
-    return hit_probability*sum([(TP+tp+tpm)*probability/(wse*2**koloss) for TP,probability in discrete_TP_distribution])
+    return hit_probability*sum([math.floor((TP+tp+tpm)*probability)/(wse*2**koloss) for TP,probability in discrete_TP_distribution])
 
 def get_being_damage_output(from_waffe, to_waffe, to_werte, from_atm=0, to_vtm=0, tpm=0):
     """
