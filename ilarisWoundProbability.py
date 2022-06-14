@@ -2,6 +2,7 @@
 from re import S
 import numpy
 import math
+import pprint
 
 def ilarisHitProb(at,vt):
     """
@@ -47,17 +48,17 @@ def get_damage_output(discrete_TP_distribution, tp, wse, koloss=0, tpm=0, hit_pr
 
 def get_being_damage_output(from_waffe, to_waffe, to_werte, from_atm=0, to_vtm=0, tpm=0):
     """
-    from_being: Being that is to be tested.
-    to_being: Being that is to be tested against.
+    from_waffe: contains at,vt,tp(n,s,tp)
+    to_waffe: contains vt
+    to_werte: contains ws, wse and coloss
+    from_atm: at modificator
+    to_vtm: vt modificator
+    tpm: tp modificator
     return: Expected one-turn damage_output from from_being against to_being
     """
-    #print(from_character.name)
     at,vt = from_waffe["AT"] + from_atm, to_waffe["VT"]+to_vtm
     n,s,tp = from_waffe["TP"]["anzahl"], from_waffe["TP"]["W"], from_waffe["TP"]["plus"]+tpm
     wse,koloss = to_werte.get("WSE") or to_werte["WS"], to_werte.get("koloss") or 0
     hit_probability = ilarisHitProb(at,vt)
-    #print("hitpro", hit_probability)
     discrete_TP_distribution = get_NdS_discrete_TP_distribution(n,s)
-    #print("discrete_tp_distribution")
-    #print(discrete_TP_distribution)
     return get_damage_output(discrete_TP_distribution, tp, wse, koloss, tpm, hit_probability)
